@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.20)
 
 project(SbNext)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Set a default build type if none was specified
 set(default_build_type "Debug")
@@ -29,10 +31,29 @@ if(WIN32)
 	add_definitions(-DUNICODE)
 endif()
 
-set(SOURCE_DIR ../godot)
+#set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../godot")
 
 message("SOURCE_DIR=${SOURCE_DIR}")
 
+# Not using CONFIGURE_DEPENDS as we assume files will not be added or removed very often.
+# When they are we need to trigger a cmake by hand.
+set(PLATFORM_DIR "${SOURCE_DIR}/platform")
 
-add_executable(SbNext ${APP_SRC_FILES})
-target_link_libraries(SbNext ${APP_LIBS})
+set(MACOS_PLATFORM_DIR "${PLATFORM_DIR}/macos")
+
+file(GLOB_RECURSE MACOS_MM_SOURCES "${MACOS_PLATFORM_DIR}/*.mm")
+file(GLOB_RECURSE MACOS_CXX_SOURCES "${MACOS_PLATFORM_DIR}/*.cpp")
+file(GLOB_RECURSE MACOS_HEADERS "${MACOS_PLATFORM_DIR}/*.h")
+
+list(APPEND PLATFORM_FILES "${MACOS_MM_SOURCES}" "${MACOS_CXX_SOURCES}" "${MACOS_HEADERS}")
+
+list(APPEND APP_SOURCES "${PLATFORM_FILES}")
+
+add_executable(SbNext ${APP_SOURCES})
+#target_sources(SbNext PRIVATE ${APP_SOURCES})
+#target_link_libraries(SbNext ${APP_LIBS})
+
+source_group(TREE "${PLATFORM_DIR}" PREFIX "platform" FILES ${PLATFORM_FILES})
+
