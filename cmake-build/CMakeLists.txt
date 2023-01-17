@@ -43,26 +43,26 @@ add_executable(SbNext)
 
 # Not using CONFIGURE_DEPENDS as we assume files will not be added or removed very often.
 # When they are we need to trigger a cmake by hand.
-set(PLATFORM_DIR "${SOURCE_DIR}/platform")
+set(PLATFORM_ROOT_DIR "${SOURCE_DIR}/platform")
 
-set(MACOS_PLATFORM_DIR "${PLATFORM_DIR}/macos")
-set(WIN_PLATFORM_DIR "${PLATFORM_DIR}/windows")
 if (APPLE)
-    file(GLOB_RECURSE MACOS_MM_SOURCES "${MACOS_PLATFORM_DIR}/*.mm")
-    file(GLOB_RECURSE MACOS_CXX_SOURCES "${MACOS_PLATFORM_DIR}/*.cpp")
-    file(GLOB_RECURSE MACOS_HEADERS "${MACOS_PLATFORM_DIR}/*.h")
+    set(PLATFORM_DIR "${PLATFORM_ROOT_DIR}/macos")
+    file(GLOB_RECURSE MACOS_MM_SOURCES "${PLATFORM_DIR}/*.mm")
+    file(GLOB_RECURSE MACOS_CXX_SOURCES "${PLATFORM_DIR}/*.cpp")
+    file(GLOB_RECURSE MACOS_HEADERS "${PLATFORM_DIR}/*.h")
 
     list(APPEND PLATFORM_FILES "${MACOS_MM_SOURCES}" "${MACOS_CXX_SOURCES}" "${MACOS_HEADERS}")
 elseif(WIN32)
-    file(GLOB_RECURSE WIN_CXX_SOURCES "${WIN_PLATFORM_DIR}/*.cpp")
-    file(GLOB_RECURSE WIN_HEADERS "${WIN_PLATFORM_DIR}/*.h")
+    set(PLATFORM_DIR "${PLATFORM_ROOT_DIR}/windows")
+    file(GLOB_RECURSE WIN_CXX_SOURCES "${PLATFORM_DIR}/*.cpp")
+    file(GLOB_RECURSE WIN_HEADERS "${PLATFORM_DIR}/*.h")
 
     list(APPEND PLATFORM_FILES "${WIN_CXX_SOURCES}" "${WIN_HEADERS}")
 else()
     message("unix not yet supported")
 endif()
 
-source_group(TREE "${PLATFORM_DIR}" PREFIX "platform" FILES ${PLATFORM_FILES})
+source_group(TREE "${PLATFORM_ROOT_DIR}" PREFIX "platform" FILES ${PLATFORM_FILES})
 list(APPEND APP_SOURCES "${PLATFORM_FILES}")
 
 # --------------------- Core ---------------------------
@@ -74,9 +74,18 @@ list(APPEND CORE_FILES "${CORE_CXX}" "${CORE_HEADERS}")
 list(APPEND APP_SOURCES "${CORE_FILES}")
 source_group(TREE "${CORE_DIR}" PREFIX "core" FILES ${CORE_FILES})
 
+# ----------------------- core/disabled_classes.gen.h ---------------
+
+set(GENFILE_DIR "${CMAKE_BINARY_DIR}/genfiles")
+
+file(MAKE_DIRECTORY "${GENFILE_DIR}/core")
+file(WRITE "${GENFILE_DIR}/core/disabled_classes.gen.h" "/* THIS FILE IS GENERATED DO NOT EDIT */\n")
+
 
 target_sources(SbNext PRIVATE ${APP_SOURCES})
 #target_link_libraries(SbNext ${APP_LIBS})
-target_include_directories(SbNext PRIVATE "${SOURCE_DIR}")
+target_include_directories(SbNext PRIVATE ${SOURCE_DIR})
+target_include_directories(SbNext PRIVATE ${PLATFORM_DIR})
+target_include_directories(SbNext PRIVATE ${GENFILE_DIR})
 
 
