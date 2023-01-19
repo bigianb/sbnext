@@ -33,6 +33,7 @@ endif()
 
 #set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
 set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../godot")
 
 message("SOURCE_DIR=${SOURCE_DIR}")
@@ -81,6 +82,12 @@ set(GENFILE_DIR "${CMAKE_BINARY_DIR}/genfiles")
 file(MAKE_DIRECTORY "${GENFILE_DIR}/core")
 file(WRITE "${GENFILE_DIR}/core/disabled_classes.gen.h" "/* THIS FILE IS GENERATED DO NOT EDIT */\n")
 
+# ---------------------- make_virtuals ---------------------------
+
+file(MAKE_DIRECTORY "${GENFILE_DIR}/core/object")
+execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "python" "run_make_virtuals.py" "${GENFILE_DIR}/core/object/gdvirtual.gen.inc")
+
+# ----------------------
 
 target_sources(SbNext PRIVATE ${APP_SOURCES})
 #target_link_libraries(SbNext ${APP_LIBS})
