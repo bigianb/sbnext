@@ -27,8 +27,9 @@ if(WIN32)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MP")
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 	add_definitions(-D_SCL_SECURE_NO_WARNINGS)
-	add_definitions(-D_UNICODE)
-	add_definitions(-DUNICODE)
+    add_definitions(-DNOMINMAX)
+    add_definitions(-DTYPED_METHOD_BIND)
+    add_definitions(-DTOOLS_ENABLED)
 endif()
 
 #set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -81,6 +82,11 @@ set(GENFILE_DIR "${CMAKE_BINARY_DIR}/genfiles")
 
 file(MAKE_DIRECTORY "${GENFILE_DIR}/core")
 file(WRITE "${GENFILE_DIR}/core/disabled_classes.gen.h" "/* THIS FILE IS GENERATED DO NOT EDIT */\n")
+
+# ---------------------- generate code headers ---------------------------
+
+file(MAKE_DIRECTORY "${GENFILE_DIR}/core")
+execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "python" "make_core_headers.py" "${SOURCE_DIR}" "${GENFILE_DIR}")
 
 # ---------------------- make_virtuals ---------------------------
 

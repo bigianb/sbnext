@@ -34,3 +34,4 @@
 build_xcode
 build_vs2022
 
+*.pyc
