@@ -41,6 +41,8 @@ message("SOURCE_DIR=${SOURCE_DIR}")
 
 add_executable(SbNext)
 
+set(PYTHON_CMD "python3")
+
 # --------------------- Platform -----------------------
 
 # Not using CONFIGURE_DEPENDS as we assume files will not be added or removed very often.
@@ -83,15 +85,17 @@ set(GENFILE_DIR "${CMAKE_BINARY_DIR}/genfiles")
 file(MAKE_DIRECTORY "${GENFILE_DIR}/core")
 file(WRITE "${GENFILE_DIR}/core/disabled_classes.gen.h" "/* THIS FILE IS GENERATED DO NOT EDIT */\n")
 
-# ---------------------- generate code headers ---------------------------
+# ---------------------- generate core headers ---------------------------
 
 file(MAKE_DIRECTORY "${GENFILE_DIR}/core")
-execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "python" "make_core_headers.py" "${SOURCE_DIR}" "${GENFILE_DIR}")
+execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "make_core_headers.py" "${SOURCE_DIR}" "${GENFILE_DIR}")
+
+execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "make_version_headers.py" "${SOURCE_DIR}" "${GENFILE_DIR}")
 
 # ---------------------- make_virtuals ---------------------------
 
 file(MAKE_DIRECTORY "${GENFILE_DIR}/core/object")
-execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "python" "run_make_virtuals.py" "${GENFILE_DIR}/core/object/gdvirtual.gen.inc")
+execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "run_make_virtuals.py" "${GENFILE_DIR}/core/object/gdvirtual.gen.inc")
 
 # ----------------------
 
