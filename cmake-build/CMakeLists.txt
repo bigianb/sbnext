@@ -22,6 +22,9 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_definitions(-DTOOLS_ENABLED)
+add_definitions(-DDEBUG_ENABLED)
+
 if(WIN32)
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Od")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /MP")
@@ -29,7 +32,10 @@ if(WIN32)
 	add_definitions(-D_SCL_SECURE_NO_WARNINGS)
     add_definitions(-DNOMINMAX)
     add_definitions(-DTYPED_METHOD_BIND)
-    add_definitions(-DTOOLS_ENABLED)
+
+    add_definitions(-DWINDOWS_ENABLED)
+    add_definitions(-DWASAPI_ENABLED)
+
 endif()
 
 #set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -96,6 +102,11 @@ execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "make_vers
 
 file(MAKE_DIRECTORY "${GENFILE_DIR}/core/object")
 execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "run_make_virtuals.py" "${GENFILE_DIR}/core/object/gdvirtual.gen.inc")
+
+# ---------------------- make_wrappers ---------------------------
+
+file(MAKE_DIRECTORY "${GENFILE_DIR}/core/extension")
+execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "run_make_wrappers.py" "${SOURCE_DIR}" "${GENFILE_DIR}")
 
 # ----------------------
 
