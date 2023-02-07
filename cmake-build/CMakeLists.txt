@@ -91,6 +91,9 @@ set(GENFILE_DIR "${CMAKE_BINARY_DIR}/genfiles")
 file(MAKE_DIRECTORY "${GENFILE_DIR}/core")
 file(WRITE "${GENFILE_DIR}/core/disabled_classes.gen.h" "/* THIS FILE IS GENERATED DO NOT EDIT */\n")
 
+file(MAKE_DIRECTORY "${GENFILE_DIR}/modules")
+file(WRITE "${GENFILE_DIR}/modules/modules_enabled.gen.h" "/* THIS FILE IS GENERATED DO NOT EDIT */\n")
+
 # ---------------------- generate core headers ---------------------------
 
 file(MAKE_DIRECTORY "${GENFILE_DIR}/core")
@@ -107,6 +110,12 @@ execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "run_make_
 
 file(MAKE_DIRECTORY "${GENFILE_DIR}/core/extension")
 execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "run_make_wrappers.py" "${SOURCE_DIR}" "${GENFILE_DIR}")
+
+# ---------------------- make_platforms ---------------------------
+
+file(MAKE_DIRECTORY "${GENFILE_DIR}/platform/windows")
+file(MAKE_DIRECTORY "${GENFILE_DIR}/platform/macos")
+execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "make_platforms.py" "${SOURCE_DIR}" "${GENFILE_DIR}")
 
 # ----------------------
 

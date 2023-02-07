@@ -2,12 +2,6 @@ import sys
 from godot.core.extension.make_wrappers import run
 from godot.core.extension.make_interface_dumper import run as run_dumper
 
-#env.CommandNoCache(
-#    "gdextension_interface_dump.gen.h",
-#    ["gdextension_interface.h", "make_interface_dumper.py"],
-#    run_in_subprocess(make_interface_dumper.run),
-#)
-
 # pass in binary dir and source dir
 
 src_dir = sys.argv[1]
