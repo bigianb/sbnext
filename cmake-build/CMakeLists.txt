@@ -35,7 +35,11 @@ if(WIN32)
 
     add_definitions(-DWINDOWS_ENABLED)
     add_definitions(-DWASAPI_ENABLED)
+endif()
 
+if (APPLE)
+    add_definitions(-DUNIX_ENABLED)
+    add_definitions(-DMACOS_ENABLED)
 endif()
 
 #set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -60,7 +64,6 @@ if (APPLE)
     file(GLOB_RECURSE MACOS_MM_SOURCES "${PLATFORM_DIR}/*.mm")
     file(GLOB_RECURSE MACOS_CXX_SOURCES "${PLATFORM_DIR}/*.cpp")
     file(GLOB_RECURSE MACOS_HEADERS "${PLATFORM_DIR}/*.h")
-
     list(APPEND PLATFORM_FILES "${MACOS_MM_SOURCES}" "${MACOS_CXX_SOURCES}" "${MACOS_HEADERS}")
 elseif(WIN32)
     set(PLATFORM_DIR "${PLATFORM_ROOT_DIR}/windows")
@@ -116,6 +119,21 @@ execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "run_make_
 file(MAKE_DIRECTORY "${GENFILE_DIR}/platform/windows")
 file(MAKE_DIRECTORY "${GENFILE_DIR}/platform/macos")
 execute_process(WORKING_DIRECTORY ${ROOT_DIR} COMMAND "${PYTHON_CMD}" "make_platforms.py" "${SOURCE_DIR}" "${GENFILE_DIR}")
+
+# --------------------- Third Party ---------------------------
+
+set(THIRDPARTY_DIR "${SOURCE_DIR}/thirdparty")
+
+# --------- mbedtls ------
+
+set(MBEDTLS_DIR "${THIRDPARTY_DIR}/mbedtls")
+file(GLOB_RECURSE MBEDTLS_HEADERS "${MBEDTLS_DIR}/*.h")
+file(GLOB_RECURSE MBEDTLS_CXX "${MBEDTLS_DIR}/*.cpp")
+list(APPEND MBEDTLS_FILES "${MBEDTLS_CXX}" "${MBEDTLS_HEADERS}")
+
+list(APPEND APP_SOURCES "${MBEDTLS_FILES}")
+target_include_directories(SbNext PRIVATE "${MBEDTLS_DIR}/include")
+source_group(TREE "${MBEDTLS_DIR}" PREFIX "mbedtls" FILES ${MBEDTLS_FILES})
 
 # ----------------------
 
